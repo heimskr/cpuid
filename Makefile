@@ -13,8 +13,8 @@ test: cpuid
 dbg: cpuid
 	$(DEBUGGER) ./cpuid
 
-atest: cpuid
-	./cpuid apic
+xtest: cpuid
+	./cpuid x2apic
 
-adbg: cpuid
-	$(DEBUGGER) ./cpuid -- apic
+xdbg: cpuid
+	$(DEBUGGER) ./cpuid -- x2apic

@@ -5,9 +5,12 @@
 #include <thread>
 #include <vector>
 
-unsigned int get_apic_id() {
+unsigned int get_x2apic_id() {
 	unsigned int edx;
+	// When calling cpuid with eax=0xb, it seems you need to have ebx=0 to prevent a segfault.
 	__asm__("cpuid" : "=d" (edx) : "a" (0xb), "b" (0));
+	// When you call cpuid with eax=0xb, the 32-bit value in edx contains the CPU ID.
+	// This is useful for systems with 256 or more cores.
 	return edx;
 }
 
@@ -22,11 +25,11 @@ int main(int argc, char **argv) {
 	std::vector<std::thread> threads {};
 	std::mutex mutex;
 
-	bool use_apic = 1 < argc && std::string(argv[1]) == "apic";
+	bool use_x2apic = 1 < argc && std::string(argv[1]) == "x2apic";
 	for (int i = 0; i < 16; ++i) {
 		threads.push_back(std::thread([&, i]() {
 			std::unique_lock<std::mutex> lock {mutex};
-			std::cout << "CPU[" << std::setw(2) << i << "]: " << (use_apic? get_apic_id() : get_core_id()) << "\n";
+			std::cout << "CPU[" << std::setw(2) << i << "]: " << (use_x2apic? get_x2apic_id() : get_core_id()) << "\n";
 		}));
 	}
 
