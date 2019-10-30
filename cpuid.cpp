@@ -7,7 +7,7 @@
 
 unsigned int get_apic_id() {
 	unsigned int edx;
-	__asm__("cpuid" : "=d" (edx) : "a" (0xb));
+	__asm__("cpuid" : "=d" (edx) : "a" (0xb), "b" (0));
 	return edx;
 }
 
