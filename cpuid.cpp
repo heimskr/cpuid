@@ -25,12 +25,24 @@ int main(int argc, char **argv) {
 	std::vector<std::thread> threads {};
 	std::mutex mutex;
 
-	bool use_x2apic = 1 < argc && std::string(argv[1]) == "x2apic";
-	for (int i = 0; i < 16; ++i) {
-		threads.push_back(std::thread([&, i]() {
-			std::unique_lock<std::mutex> lock {mutex};
-			std::cout << "CPU[" << std::setw(2) << i << "]: " << (use_x2apic? get_x2apic_id() : get_core_id()) << "\n";
-		}));
+	const std::string arg = 1 < argc? argv[1] : "";
+
+	if (arg == "both") {
+		for (int i = 0; i < 16; ++i) {
+			threads.push_back(std::thread([&, i]() {
+				std::unique_lock<std::mutex> lock {mutex};
+				std::cout << "CPU[" << std::setw(2) << i << "]: " << std::setw(2) << get_core_id() << " "
+				          << get_x2apic_id() << "\n";
+			}));
+		}
+	} else {
+		bool use_x2apic = arg == "x2apic";
+		for (int i = 0; i < 16; ++i) {
+			threads.push_back(std::thread([&, i]() {
+				std::unique_lock<std::mutex> lock {mutex};
+				std::cout << "CPU[" << std::setw(2) << i << "]: " << (use_x2apic? get_x2apic_id() : get_core_id()) << "\n";
+			}));
+		}
 	}
 
 	for (int i = 0; i < 16; ++i)

@@ -18,3 +18,9 @@ xtest: cpuid
 
 xdbg: cpuid
 	$(DEBUGGER) ./cpuid -- x2apic
+
+btest: cpuid
+	./cpuid both
+
+bdbg: cpuid
+	$(DEBUGGER) ./cpuid -- both
